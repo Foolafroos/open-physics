@@ -1,0 +1,10 @@
+name: open-physics
+label: Open Physics
+version: "0.1.0"
+description: >
+  Pre-alpha scaffold for a clean-room, deterministic physics engine for
+  Hermes Agent. This release contains only the loadable plugin shell and
+  public design documents. It registers no tools and performs no simulation;
+  simulation tools will be added only with a real native core.
+author: Fool (Dingbat)
+provides_tools: []

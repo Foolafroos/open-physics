@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# Native builds
+build/
+dist/
+target/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Research/proprietary material must never enter this repository
+research/
+artifacts/
+*.pdb
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
