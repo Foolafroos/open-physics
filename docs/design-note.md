@@ -49,6 +49,12 @@ The compiler between them must be deterministic and must produce a memory plan â
 
 This design makes constraint ordering explicit data, which is essential for deterministic replay. It also lets the implementation choose between separate kernels and an inlined switch without changing the public model.
 
+Study of representative builders (a ball-socket joint, a soft linear axis, an ignore modifier) sharpened three rules for the authoring IR:
+
+- **Atom records are fixed-size and 16-byte aligned in a flat arena.** The list is traversed by record-size arithmetic, not by pointers between atoms. Record sizes must therefore be explicit, stable, and part of the public format.
+- **Modifiers act on emission, not on the solver.** Disabling a constraint is implemented by rewinding the schema cursor over the group header that was just written; the constraint never enters the solver program. The compiler should expose a small set of program-level operations (cancel, wrap, patch) instead of a modifier class per behavior.
+- **Variants are explicit fields, never sentinel values.** Choosing a limited-impulse variant by comparing a maximum against float-max is fragile and invisible in the data. The authoring IR should carry optional fields (e.g. an impulse limit) and let the compiler select the variant from them.
+
 ### Sequential impulses with accumulated clamping
 
 Contact resolution uses sequential impulses. The impulse delta is clamped against the **accumulated impulse**, not only against the current delta. Limited contacts add an upper bound derived from their configured maximum impulse. The accumulated value persists for warm starting.
