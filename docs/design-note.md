@@ -38,6 +38,15 @@ A constraint group is encoded as a stream of schemas:
 
 A schema ID and a kernel are not required to have a one-to-one relationship. Specialized variants may share a kernel when their runtime behavior is identical.
 
+### Two IRs: authoring and solver
+
+The public API should not expose solver schemas directly. The engine needs two distinct intermediate representations:
+
+1. an **authoring IR**: ordered, canonically serializable constraint atoms, including local frames and modifiers;
+2. a **solver IR**: compiled schemas with explicit sizes, temporary counts, and optimized variants.
+
+The compiler between them must be deterministic and must produce a memory plan — schema bytes, solver results, and solver temporaries — before emitting the program. Timing factors and accumulator references are baked during this build rather than rediscovered by the hot loop.
+
 This design makes constraint ordering explicit data, which is essential for deterministic replay. It also lets the implementation choose between separate kernels and an inlined switch without changing the public model.
 
 ### Sequential impulses with accumulated clamping
