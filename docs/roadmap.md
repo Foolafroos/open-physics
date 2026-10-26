@@ -28,9 +28,9 @@ Scope: Python/MCP packaging, Godot GDExtension, and WASM build. Integrate with t
 
 ## M4 — Active ragdoll and motor brain
 
-Scope: ragdoll joint limits, motor atoms with explicit force limits, goal-driven behaviors (balance, grasp, get-up) running inside the step, and the character-chain stability decision (soft-constraint tuning versus a dedicated articulated chain path, shared with M2). The `patch` operation for per-frame motor targets is part of the compiler scope.
+Scope: ragdoll joint limits, motor atoms with explicit force limits, goal-driven behaviors (balance, grasp, get-up) running inside the step, a default-on self-preservation behavior pack (flinch, brace, protect, grab-at-support, grab-at-wound) arbitrated by a deterministic priority stack, solver diagnostics consumed as proprioception, and the character-chain stability decision (soft-constraint tuning versus a dedicated articulated chain path, shared with M2). The `patch` operation for per-frame motor targets and bracing gains is part of the compiler scope.
 
-**Acceptance:** a documented character scenario — pushed off a curb, staggers and recovers; grabs a railing on a moving object and holds until its force limit is exceeded, then slips; gets up after a fall — reproduced bit-exact from a replay log, with solver diagnostics showing no accumulated cheat forces. No scripted animation in the outcome.
+**Acceptance:** a documented character scenario — pushed off a curb, staggers and recovers; grabs a railing on a moving object and holds until its force limit is exceeded, then slips; gets up after a fall; flinches from an approaching object and braces before impact; guards a positioned injury — reproduced bit-exact from a replay log, with solver diagnostics showing no accumulated cheat forces. No scripted animation in the outcome.
 
 ## Current state
 

@@ -90,7 +90,11 @@ A goal-driven character controller — the capability that made Euphoria-powered
 - **Muscles**: motor atoms with explicit force limits. The force limit *is* muscle strength; when the impulse a grasp demands exceeds it, the hand slips and the visible stagger emerges from the data, not from a special case.
 - **Brain**: behaviors are pure functions from perception (contacts, pose, velocities, goals) to motor targets and gains, plus emission or removal of grasp constraints. They run inside the step, closing the loop.
 
-Consequences for the compiler: motor targets are per-instance values baked into schemas, so an active character rebuilds or patches its constraint program every frame. The program-level `patch` operation (rewrite baked values without re-emitting structure) is therefore a first-class requirement, not an optimization.
+Consequences for the compiler: motor targets are per-instance values baked into schemas, so an active character rebuilds or patches its constraint program every frame. The program-level `patch` operation (rewrite baked values without re-emitting structure) is therefore a first-class requirement, not an optimization. Bracing before a predicted impact is exactly this: a gain and force-limit patch, no structural change.
+
+**Self-preservation is a shipped behavior pack, not a special feature.** NaturalMotion's own description of GTA IV characters — flinching when something comes close, grasping at injuries, stumbling backwards when knocked, tripping on obstacles, getting out of an incoming threat — is reproduced here as a default-on pack written with the same primitives: flinch (motor burst against a predicted threat), brace (gain patch), protect (arm-to-head constraints on fall detection), grab-at-support (force-limited grasp emitted on balance loss), grab-at-wound (target bias from a positioned damage event), recover/get-up. The solver's own diagnostics — contact impulses, violations, breached limits — are the character's proprioception; no separate perception system is introduced.
+
+Behavior arbitration is deterministic data: a priority stack with entry/exit hysteresis, self-preservation preempting locomotion and game goals, thresholds and orders canonically serializable. No wall-clock timers.
 
 "Euphoria's results are different every time" is sensitivity to initial conditions, not randomness. A deterministic brain keeps bit-exact replay intact; explicit seeded variation is opt-in.
 
