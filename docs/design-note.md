@@ -82,6 +82,20 @@ A playtester agent must be able to inspect solver health rather than infer it fr
 
 Constraint breakage is a native state, not a gameplay workaround. Specialized solvers are planned for chains and cloth instead of forcing every problem through generic contact handling.
 
+### Character layer: motor brain (active ragdoll)
+
+A goal-driven character controller — the capability that made Euphoria-powered characters in GTA IV and Red Dead Redemption stagger, grab at supports, and get up — is a third layer above the two IRs, not a new physics engine:
+
+- **Body**: a skeleton of rigid bodies and colliders joined by limit atoms (the public ragdoll decomposition: ball-socket plus angular/twist/cone limits).
+- **Muscles**: motor atoms with explicit force limits. The force limit *is* muscle strength; when the impulse a grasp demands exceeds it, the hand slips and the visible stagger emerges from the data, not from a special case.
+- **Brain**: behaviors are pure functions from perception (contacts, pose, velocities, goals) to motor targets and gains, plus emission or removal of grasp constraints. They run inside the step, closing the loop.
+
+Consequences for the compiler: motor targets are per-instance values baked into schemas, so an active character rebuilds or patches its constraint program every frame. The program-level `patch` operation (rewrite baked values without re-emitting structure) is therefore a first-class requirement, not an optimization.
+
+"Euphoria's results are different every time" is sensitivity to initial conditions, not randomness. A deterministic brain keeps bit-exact replay intact; explicit seeded variation is opt-in.
+
+Stability is the open architectural question. Field testimony around this class of controller is consistent: on a plain sequential-impulse solver, active ragdolls fight instability and accumulate cheat forces; a whole-chain articulated formulation (Featherstone-style) respects configured joint strengths and avoids foot jitter. The engine keeps sequential impulses for M0/M1 and defers the character-chain formulation decision to M4, where the "pushed → staggers → grabs a railing" scenario and solver diagnostics decide between soft-constraint tuning and a dedicated chain path (shared infrastructure with M2).
+
 ## 3. Beyond the reference architecture
 
 1. **First-class cloth** through a dedicated chain/cloth path with continuous collision handling.
