@@ -11,6 +11,7 @@ Agent game-studio pipelines can generate assets and export builds, but a playtes
 - headless-first worlds, bodies, constraints, and queries;
 - deterministic stepping and replay as a public contract, not an option;
 - native solver diagnostics (maximum violation, broken impulses, island costs);
+- goal-driven characters: active ragdolls whose muscles are force-limited constraint motors, with a default self-preservation behavior pack (flinch, brace, protect, grab-at-support) — emergent staggering, grasping, and getting up, with no scripted animation;
 - a future first-class cloth solver;
 - one core with Python/MCP, Godot, and WASM bindings.
 
@@ -43,7 +44,7 @@ __init__.py                    Loadable register(ctx) entry point
 skills/open-physics/SKILL.md    Agent workflow and availability guardrails
 core/                          Future native engine core
 docs/design-note.md            Public architecture
-docs/roadmap.md                Milestones M0–M3
+docs/roadmap.md                Milestones M0–M4
 docs/research-boundary.md      Clean-room and publication rules
 ```
 
