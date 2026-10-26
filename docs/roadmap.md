@@ -32,6 +32,12 @@ Scope: ragdoll joint limits, motor atoms with explicit force limits, goal-driven
 
 **Acceptance:** a documented character scenario — pushed off a curb, staggers and recovers; grabs a railing on a moving object and holds until its force limit is exceeded, then slips; gets up after a fall; flinches from an approaching object and braces before impact; guards a positioned injury — reproduced bit-exact from a replay log, with solver diagnostics showing no accumulated cheat forces. No scripted animation in the outcome.
 
+## M5 — Game-engine and Omniverse integration
+
+Scope: Unity and Unreal native adapters over the C ABI (an open-physics world owned by the plugin, transform synchronization with the host, the host's native physics left in place), and an OpenUSD bridge that consumes scenes authored with the standard USD Physics schema (`UsdPhysics`) and steps them with the deterministic core — as an Omniverse Kit extension or a standalone USD consumer, whichever proves the cleaner path first.
+
+**Acceptance:** the same canonical scenario produces the documented result through each host adapter; one documented USD-authored scene round-trips into the canonical world description and replays bit-exact from its replay log. No integration claim based on a rendered demo.
+
 ## Current state
 
 Only the pre-alpha repository scaffold is complete. No milestone above is claimed as implemented.

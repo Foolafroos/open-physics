@@ -6,7 +6,11 @@ This document describes the intended architecture of an original, clean-room phy
 
 ### Universal by ABI, not by wrappers
 
-The native core will expose a small, stable C ABI. Python/MCP, Godot GDExtension, and WASM bindings should all consume that same ABI rather than fork the engine's behavior.
+The native core will expose a small, stable C ABI. Python/MCP, Godot GDExtension, WASM, Unity/Unreal native plugins, and an OpenUSD/Omniverse bridge should all consume that same ABI rather than fork the engine's behavior.
+
+### Embeddable by design
+
+The core has no host dependencies: no renderer, no scene graph, and no host physics types cross the ABI. Integration is additive — the host keeps its native physics (Unity PhysX, Unreal Chaos, Omniverse/PhysX); open-physics owns its own deterministic world inside the host and exchanges state through transforms and queries. This is what makes one core serve an agent, a game build, and a USD pipeline without three codebases.
 
 ### Agent-native
 
@@ -115,15 +119,26 @@ These choices remain open until M0 implementation begins:
 - **Caller-owned arenas** — no garbage collector, no exceptions across the ABI, and no hidden global allocator.
 - **Canonical serialization** — world descriptions and replay logs use a stable, documented format rather than native struct dumps.
 
-## 5. Hermes integration
+## 5. Host integrations
+
+### Hermes Agent (founding consumer)
 
 The Hermes plugin will expose small atomic tools; the bundled skill will teach the workflow. Tools must never report success without returning inspectable state. Replay and violation reporting belong to M0/M1, not to a distant debug release.
 
 The project is complementary to `godot-studio`: Godot tooling handles verification and export; open-physics is intended to provide deterministic simulation for playtesting.
 
+### Game engines
+
+Godot GDExtension is the first engine binding (M3). Unity and Unreal follow the same rule: a thin native plugin over the C ABI that owns an open-physics world inside the host and synchronizes transforms with host rendering. The host's native physics (Unity's PhysX, Unreal's Chaos) is not replaced — open-physics serves the workloads where its guarantees are the point: reproducible physics regression tests, lockstep replay and deterministic-networking prototypes, deterministic gameplay mechanics, and agent playtesting inside real builds.
+
+### OpenUSD / NVIDIA Omniverse
+
+OpenUSD carries a standard physics schema (`UsdPhysics`: physics scenes, rigid bodies, colliders, mass, materials, joints, articulation APIs), developed by NVIDIA in collaboration with Pixar and Apple; PhysX is the platform's primary physics engine and consumes scenes authored with these schemas. The integration path is a bridge, not a replacement: a component that loads USD scenes authored with the standard schema and steps them with the deterministic core, exposing the same replay logs and solver diagnostics available to agents. A USD-authored scenario should round-trip into the engine's canonical world description and step bit-exact from its replay log. Whether it lands first as an Omniverse Kit extension or as a standalone USD consumer is an implementation choice deferred to M5; the schema contract is the same either way.
+
 ## 6. Explicit non-goals for the scaffold
 
 - No claim of Havok compatibility or feature parity.
+- No claim to replace a host's native physics (Unity PhysX, Unreal Chaos, Omniverse/PhysX). Integration is additive.
 - No redistribution of proprietary binaries, objects, headers, or decompiled output.
 - No fabricated M0 implementation, benchmark, or determinism result.
 
